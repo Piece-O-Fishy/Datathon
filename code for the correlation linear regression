@@ -1,0 +1,26 @@
+import pandas as pd
+
+ 
+df = pd.read_csv('dynamic_supply_chain_logistics_dataset.csv')
+
+
+# Y:(Delay Probability)
+# X: Key input features
+COLUMNS_OF_INTEREST = [
+    'traffic_congestion_level', 
+    'route_risk_level', 
+    'weather_condition_severity', 
+    'fatigue_monitoring_score', 
+    'delivery_time_deviation' # Y variable
+]
+
+
+df_corr = df[COLUMNS_OF_INTEREST]
+
+
+correlation_matrix = df_corr.corr(method='pearson')
+
+
+correlations_with_y = correlation_matrix['delivery_time_deviation'].drop('delivery_time_deviation').sort_values(ascending=False)
+
+print(correlations_with_y)
