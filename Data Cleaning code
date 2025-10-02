@@ -1,0 +1,32 @@
+import pandas as pd
+
+
+df = pd.read_csv("dynamic_supply_chain_logistics_dataset.csv")
+#check for null values
+a = df.isnull().sum()
+print(a)
+#change the column 'timestamp' to datetime
+df['timestamp'] = pd.to_datetime(df['timestamp'], errors='coerce')
+#removed timestaps with error
+df = df.dropna(subset=['timestamp'])
+#remove duplicates
+df = df.drop_duplicates()
+#check type of 'deliver time deviation' - should be int
+df['delivery_time_deviation'].dtype
+#check type of "eta_variation_hours" - should be int
+df['eta_variation_hours'].dtype
+
+
+# Latitude must be between -90 and +90
+invalid_lat = df[(df['vehicle_gps_latitude'] < -90) | (df['vehicle_gps_latitude'] > 90)]
+
+
+# Longitude must be between -180 and +180
+invalid_lon = df[(df['vehicle_gps_longitude'] < -180) | (df['vehicle_gps_longitude'] > 180)]
+
+
+print(f"Invalid latitude entries: {len(invalid_lat)}")
+print(f"Invalid longitude entries: {len(invalid_lon)}")
+
+
+df.to_csv('cleaned_logistics_data.csv', index=False)
