@@ -1,0 +1,55 @@
+
+library(ggplot2)
+library(ggmap)
+library(dplyr)
+
+# Stadia Maps API (AI was used to write the API part as Stadia Maps outdated code did not work) 
+register_stadiamaps("5ea82a98-5aff-4bb6-8afd-c0757166ba71")
+
+dynamic_supply_chain_logistics_dataset <- read.csv("dynamic_supply_chain_logistics_dataset.csv") 
+
+# column names
+colnames(dynamic_supply_chain_logistics_dataset)
+
+# California bounding box for map
+bbox <- c(left = -124.48, bottom = 32.53, right = -114.13, top = 42.01)
+
+cal_map <- get_stadiamap(
+  bbox = bbox,
+  zoom = 6,
+  maptype = "stamen_toner_lite"
+)
+
+ggmap(cal_map) +
+  
+  # traffic congestion density heatmap
+  stat_density_2d(
+    data = traffic_congestion_level,
+    aes(x = vehicle_gps_longitude, y = vehicle_gps_latitude, fill = ..level.., alpha = ..level..),
+    geom = "polygon",
+    bins = 30
+  ) +
+  
+  # ETA variation points on top
+  geom_point(
+    data = dynamic_supply_chain_logistics_dataset,
+    aes(x = vehicle_gps_longitude, y = vehicle_gps_latitude, color = `eta_variation_hours`),
+    size = 2,
+    alpha = 0.8
+  ) +
+  
+  scale_fill_viridis_c(option = "magma") +
+  scale_color_viridis_c(option = "plasma") +
+  
+  guides(alpha = "none") +
+  
+  coord_fixed() +
+  
+  theme_minimal() +
+  labs(
+    title = "California Traffic Heatmap with Plotted ETA Variation",
+    x = "vehicle_gps_longitude",
+    y = "vehicle_gps_latitude",
+    fill = "traffic_congestion_level",
+    color = "eta_variation_hours"
+  )
