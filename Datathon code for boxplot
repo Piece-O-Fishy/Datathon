@@ -1,0 +1,49 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+
+
+pd.set_option('display.max_rows', None)     # Show all rows
+pd.set_option('display.max_columns', None)  # Show all columns
+pd.set_option('display.width', 1000)        # Increase display width
+
+
+plt.style.use('ggplot') 
+plt.rcParams['figure.figsize'] = (15, 8) 
+
+df = pd.read_csv('dynamic_supply_chain_logistics_dataset.csv')
+
+# core numerical features for a quick summary
+#the main risk factors and the target variable = 
+basic_features = [
+    'traffic_congestion_level', 
+    'route_risk_level',
+    'weather_condition_severity',
+    'loading_unloading_time',
+    'iot_temperature',
+    'driver_behavior_score',
+    'fatigue_monitoring_score',
+    'handling_equipment_availability',
+    'delivery_time_deviation',
+    'eta_variation_hours',
+    'delay_probability'
+]
+
+print("--- Descriptive Statistics for Key Features ---")
+summary = df[basic_features].describe().transpose()
+
+print(summary)
+
+
+# Set up the figure for the plot
+fig, ax = plt.subplots(figsize=(15, 8))
+
+df[basic_features].boxplot(ax=ax, vert=False, patch_artist=True, medianprops={'color': 'red'})
+
+# titles and labels 
+ax.set_title('Box Plot Analysis of Key Numerical Features', fontsize=16, pad=20)
+ax.set_xlabel('Value / Score Range', fontsize=12)
+ax.set_ylabel('Feature Name', fontsize=12)
+ax.grid(axis='x', linestyle='--', alpha=0.6)
+
+plt.tight_layout()
+plt.show()  
