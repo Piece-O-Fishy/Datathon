@@ -25,7 +25,7 @@ plt.tight_layout()
 plt.savefig('delay_forecast.png', dpi=300, bbox_inches='tight')
 plt.show()
 
-
+# Using AI for guidance - to forecast monthly delays
 from prophet import Prophet
 
 
