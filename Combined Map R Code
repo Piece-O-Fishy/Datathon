@@ -14,6 +14,7 @@ colnames(dynamic_supply_chain_logistics_dataset)
 # California bounding box for map
 bbox <- c(left = -124.48, bottom = 32.53, right = -114.13, top = 42.01)
 
+# source: https://docs.stadiamaps.com/static-maps/ 
 cal_map <- get_stadiamap(
   bbox = bbox,
   zoom = 6,
