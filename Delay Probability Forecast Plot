@@ -1,0 +1,51 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+
+
+#  timestamp changed to datetime format
+df['timestamp'] = pd.to_datetime(df['timestamp'])
+
+
+#  Set timestamp as index
+df.set_index('timestamp', inplace=True)
+
+
+# Resample to monthly average
+monthly_delay = df['delay_probability'].resample('M').mean()
+
+
+# Step 4: Plot the monthly forecast
+plt.figure(figsize=(12, 6))
+plt.plot(monthly_delay.index, monthly_delay.values, marker='o', color='teal')
+plt.title('Monthly Average Delay Probability (2021–2024)')
+plt.xlabel('Month')
+plt.ylabel('Average Delay Probability')
+plt.grid(True)
+plt.tight_layout()
+plt.savefig('delay_forecast.png', dpi=300, bbox_inches='tight')
+plt.show()
+
+
+from prophet import Prophet
+
+
+#  Prepare data to make a forcast
+monthly_df = monthly_delay.reset_index()
+monthly_df.columns = ['ds', 'y']  # Prophet needs these column names
+
+
+#Fit model
+model = Prophet()
+model.fit(monthly_df)
+# Create future dataframe
+future = model.make_future_dataframe(periods=6, freq='M')  # Forecast next 6 months
+
+
+#  Predict
+forecast = model.predict(future)
+
+
+# Plot
+model.plot(forecast)
+fig = model.plot(forecast)
+fig.savefig('prophet_delay_forecast.png', dpi=300, bbox_inches='tight')
